@@ -60,8 +60,7 @@
             </el-form>
             <div style="text-align: center">
               <el-button type="primary" @click="submitForm('ruleForm')"
-                >注册</el-button
-              >
+                >注册</el-button>
               <el-button @click="goback">返回</el-button>
             </div>
           </el-card>

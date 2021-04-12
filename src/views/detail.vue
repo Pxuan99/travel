@@ -73,8 +73,7 @@
               placeholder="点击发表评价"
               v-model="textarea"
               show-word-limit
-              maxlength="233"
-            >
+              maxlength="233">
             </el-input>
           </div>
           <div>

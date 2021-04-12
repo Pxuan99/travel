@@ -9,7 +9,7 @@
         <el-container>
           <!-- 左边 -->
           <el-aside>
-            <img :src="spotPic" class="image" height="250px" />
+            <img :src="spotPic" class="image" height="300px" />
           </el-aside>
           <!-- 右边上中下 -->
           <el-container>
@@ -311,7 +311,7 @@ export default {
   color: #333;
   text-align: center;
   /* line-height: 1000px; */
-  margin-left: 200px;
+  margin-left: 150px;
 }
 
 .el-main {

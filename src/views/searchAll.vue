@@ -33,6 +33,16 @@
             </el-table-column>
             <el-table-column prop="spotAddress" label="景点地址">
             </el-table-column>
+             <el-table-column prop="spotPic" label="图片"  >
+              <!--插入图片链接的代码-->
+              <template slot-scope="scope">
+                <img
+                  :src="scope.row.spotPic"
+                  alt=""
+                  style="width: 100px; height: 80px"
+                />
+              </template>
+            </el-table-column>
             <el-table-column fixed="right" label="" width="100">
               <template slot-scope="scope">
                 <el-button

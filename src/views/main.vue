@@ -35,17 +35,17 @@
     <!-- 搜索框 -->
     <div>
       <el-row>
-        <el-col :offset="8" :span="8">
+        <el-col :offset="9" :span="8">
           <el-form :inline="true" :model="formInline" class="demo-form-inline">
             <el-form-item label="景点查询">
               <el-input
                 v-model="formInline.search"
-                placeholder="请输入旅游景点"
+                placeholder="请输入景点地址"
               ></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="search">查询</el-button>
-              <el-button type="primary" @click="searchAll">查询全部</el-button>
+              <!-- <el-button type="primary" @click="searchAll">查询全部</el-button> -->
             </el-form-item>
           </el-form>
         </el-col>
@@ -60,14 +60,20 @@
       text-color="#fff"
       active-text-color="#F6CECE"
     >
+<el-row>
+  <el-col :span="6">
       <el-menu-item index="1" @click="main">首页</el-menu-item>
+  </el-col>
+  <el-col :span="6">
       <el-menu-item index="2" @click="TravelRecommend">旅游推荐</el-menu-item>
-      <el-menu-item index="3" @click="Myticket" v-if="check()"
-        >我的门票</el-menu-item
-      >
-      <el-menu-item index="4" @click="admin" v-if="this.username == 'admin'"
-        >后台管理</el-menu-item
-      >
+</el-col>
+<el-col :span="6">
+      <el-menu-item index="3" @click="Myticket" v-if="check()">我的门票</el-menu-item>
+</el-col>
+<el-col :span="6">
+      <el-menu-item index="4" @click="admin" v-if="this.username == 'admin'">后台管理</el-menu-item>
+</el-col>
+</el-row>
     </el-menu>
     <div>
       <!-- 切换时间4000  -->
@@ -183,8 +189,13 @@ export default {
       this.$router.push("/Myticket");
     },
     search() {
-      
+      if(this.formInline.search==''){
+        
+        this.$router.push("/searchAll");
+      }
+      else{
       this.$router.push({ path: "/search", query: { spotAddress: this.formInline.search } });
+      }
     },
     searchAll() {
       this.$router.push("/searchAll");

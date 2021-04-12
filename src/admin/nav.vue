@@ -58,7 +58,18 @@ export default {
    top
   },
   data() {
-    return {};
+    return {
+       username: "",
+    };
+  },
+  mounted(){
+      this.username = localStorage.getItem("username");
+      // console.log(this.username);
+      if(this.username !='admin'){
+        window.alert("无法访问!");
+        this.$router.push("/");
+        //  window.location.href = "/";
+      }
   },
   methods: {
      

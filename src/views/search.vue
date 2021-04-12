@@ -33,6 +33,16 @@
             </el-table-column>
             <el-table-column prop="spotAddress" label="景点地址">
             </el-table-column>
+            <el-table-column prop="spotPic" label="图片" width="180">
+              <!--插入图片链接的代码-->
+              <template slot-scope="scope">
+                <img
+                  :src="scope.row.spotPic"
+                  alt=""
+                  style="width: 100px; height: 80px"
+                />
+              </template>
+            </el-table-column>
             <el-table-column fixed="right" label="" width="100">
               <template slot-scope="scope">
                 <el-button
@@ -73,7 +83,7 @@ export default {
       formInline: {
         search: "",
       },
-      spotAddress:'',
+      spotAddress: "",
       tableData: [],
       page: {
         current: 1, //当前页码
@@ -84,13 +94,13 @@ export default {
   },
   created() {
     this.getParams();
-    
+
     this.search();
+    console.log(this.tableData);
     // this.getData();
   },
   methods: {
     handleClick(row) {
-      
       this.$router.push({ path: "/detailSearch", query: { spotId: row.id } });
     },
     getParams() {
@@ -121,6 +131,7 @@ export default {
         // console.log(res.data.data.records);
         if (res.data.code == 0) {
           that.tableData = res.data.data.records;
+          
           that.page.current = res.data.data.current;
           that.page.size = res.data.data.size;
           that.page.total = res.data.data.total;

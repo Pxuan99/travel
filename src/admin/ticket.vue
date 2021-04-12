@@ -61,9 +61,11 @@ export default {
       });
     },
     del(row) {
+      //得出当前时间
       let yy = new Date().getFullYear();
       let mm = new Date().getMonth() + 1;
       let dd = new Date().getDate();
+      
       let _this = this;
       _this.gettime = yy + "-" + mm + "-" + dd;
       var now = new Date(_this.gettime.replace("-", "/"));

@@ -1,4 +1,5 @@
 <template>
+<!-- 左上角图片 -->
   <div>
     <div >
       <a href="/">

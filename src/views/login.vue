@@ -6,8 +6,8 @@
            height="100%"
            alt="" />
     </div>
-    <div>
-      <el-button @click="main()">返回首页</el-button>
+    <div >
+      <el-button @click="main()" type="info" >返回首页</el-button>
     </div>
     <div class="front">
     <el-card class="box-card">
@@ -231,4 +231,7 @@ body > .el-container {
   margin: -8px;
   
 }
+/* .back{
+  color: aquamarine;
+} */
 </style>

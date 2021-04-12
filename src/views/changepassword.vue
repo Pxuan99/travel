@@ -178,14 +178,14 @@ export default {
         if (valid) {
           let that = this;
           //数据库中获取数据
-          let url = "http://127.0.0.1:8088/test?name=" + that.ruleForm.name+"&&password="+ that.ruleForm.oldpass;
+          let url = "http://127.0.0.1:8088/user?name=" + that.ruleForm.name+"&&password="+ that.ruleForm.oldpass;
           that.$axios.get(url).then((res) => {
             let i = this.$qs.parse(res.data.data);
-            console.log(i);
+            // console.log(i);
             if (i.total == 1) {
               //若旧密码输入正确，则允许修改密码
               this.$axios
-                .put("/api/test", {
+                .put("/api/user", {
                   id:this.id,
                   email: this.email,
                   name: that.ruleForm.name,

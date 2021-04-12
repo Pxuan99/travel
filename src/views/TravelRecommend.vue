@@ -1,4 +1,4 @@
-<!-- 旅游热门推荐 -->
+<!-- 上方旅游热门推荐 -->
 <template>
   <div>
     <div>
@@ -10,7 +10,7 @@
         <el-col :offset="9" :span="7">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="景点查询">
-          <el-input v-model="formInline.search" placeholder="请输入旅游景点"></el-input>
+          <el-input v-model="formInline.search" placeholder="请输入景点地址"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit" >查询</el-button>
@@ -60,9 +60,18 @@ export default {
     };
   },
    methods: {
-      onSubmit() {
+    //   onSubmit() {
+    //   this.$router.push({ path: "/search", query: { spotAddress: this.formInline.search } });
+    // },
+    onSubmit() {
+      if(this.formInline.search==''){
+        
+        this.$router.push("/searchAll");
+      }
+      else{
       this.$router.push({ path: "/search", query: { spotAddress: this.formInline.search } });
-    },
+      }
+    }
     }
 };
 </script>

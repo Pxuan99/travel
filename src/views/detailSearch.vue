@@ -1,4 +1,5 @@
 <template>
+<!-- 详情页 -->
   <div>
     <div>
       <top></top>
@@ -7,10 +8,8 @@
       <el-container>
         <el-container>
           <!-- 左边 -->
-          <el-aside width="300px">
-            <el-card>
-              <img :src="spotPic" class="image" />
-            </el-card>
+          <el-aside>
+            <img :src="spotPic" class="image" height="250px" />
           </el-aside>
           <!-- 右边上中下 -->
           <el-container>
@@ -27,7 +26,7 @@
         </el-container>
       </el-container>
       <el-dialog title="购票详情" :visible.sync="dialog">
-        <el-form :model="form">
+        <el-form :model="form" :rules="rules" ref="form">
           <el-form-item
             label="购买门票数量（张）"
             :label-width="formLabelWidth"
@@ -40,7 +39,11 @@
               label="描述文字"
             ></el-input-number>
           </el-form-item>
-          <el-form-item label="出行日期" :label-width="formLabelWidth">
+          <el-form-item
+            label="出行日期"
+            :label-width="formLabelWidth"
+            prop="date"
+          >
             <el-date-picker
               v-model="form.date"
               type="date"
@@ -52,7 +55,7 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="buy()">确认购买</el-button>
+          <el-button type="primary" @click="buy('form')">确认购买</el-button>
         </div>
       </el-dialog>
     </div>
@@ -121,6 +124,7 @@ export default {
       username: "",
       userId: "",
       comment: "",
+      currentTime: "",
       dialog: false,
       num: 1,
       value: "",
@@ -133,12 +137,15 @@ export default {
       formLabelWidth: "140px",
       pickerOptions: {
         disabledDate(time) {
-          return time.getTime() < Date.now();
+          return time.getTime() < new Date().getTime() - 86400000;
         },
       },
       form: {
         num: "",
         date: "",
+      },
+      rules: {
+        date: [{ required: true, message: "请选择日期", trigger: "blur" }],
       },
     };
   },
@@ -146,6 +153,8 @@ export default {
     this.getParams();
     this.getData();
     this.getCom();
+    this.getTime();
+    // console.log(this.getTime());
     this.username = localStorage.getItem("username");
     this.userId = localStorage.getItem("id"); //获取当前用户的id
     // this.userId=this.getData();
@@ -170,12 +179,14 @@ export default {
         // that.spotId = res.data.data.records[0].id;
         that.ticketPrice = res.data.data.records[0].ticketPrice;
         that.spotPic = res.data.data.records[0].spotPic;
-        console.log(that.spotPic);
+        // console.log(that.spotPic);
       });
     },
     getCom() {
+      //获取评论
       let that = this;
-      let url = "http://127.0.0.1:8088/comment/com?id=" + that.spotId+"&noParm=1";
+      let url =
+        "http://127.0.0.1:8088/comment/com?id=" + that.spotId + "&noParm=1";
       that.$axios.get(url).then((res) => {
         // console.log(res);
         let str = JSON.stringify(res.data.data);
@@ -185,24 +196,37 @@ export default {
     handleChange(value) {
       console.log(value);
     },
-    buy() {
-      let that = this;
-      this.$axios
-        .post("/api/userOrder", {
-          userId: that.userId,
-          spotId: that.spotId,
-          ticketNum: that.form.num,
-          orderDate: that.form.date,
-          orderTotalprice: that.ticketPrice * that.form.num,
-        })
-        .then(() => {
-          this.dialog = false;
+    buy(formName) {
+      this.$refs[formName].validate((valid) => {
+        //先验证是否输入了数据
+        if (valid) {
+          let that = this;
+          this.$axios
+            .post("/api/userOrder", {
+              userId: that.userId,
+              spotId: that.spotId,
+              ticketNum: that.form.num,
+              orderDate: that.form.date,
+              orderTotalprice: that.ticketPrice * that.form.num,
+              orderTime: that.getTime(),
+            })
+            .then(() => {
+              this.dialog = false;
+              this.$message({
+                type: "success",
+                message: "购买成功!",
+              });
+            });
+        } else {
+          //如果没输入数据
           this.$message({
-            type: "success",
-            message: "购买成功!",
+            type: "error",
+            message: "日期不能为空，请重新选择!",
           });
-        });
+        }
+      });
     },
+
     pre() {
       // 购买前先判断是否登录
       if (this.username == "" || this.username == null) {
@@ -215,40 +239,48 @@ export default {
       }
     },
 
+    getTime() {
+      //获取当前时间
+      var yy = new Date().getFullYear();
+      var mm = new Date().getMonth() + 1;
+      var dd = new Date().getDate();
+      var _this = this;
+      _this.gettime = yy + "-" + mm + "-" + dd;
+      // var currentTime = _this.gettime;
+      // console.log(currentTime);
+      return _this.gettime;
+    },
     comment1() {
-      //发表用户评论
-      
-      if(this.username==''||this.username==null)
-      {
+      if (this.username == "" || this.username == null) {
         this.$message({
           type: "error",
           message: "请先登录!",
         });
-      }
-      else{
-      let that = this;
-      this.getData();
-      if (that.textarea != "") {
-        this.$axios
-          .post("/api/comment", {
-            userId: that.userId,
-            spotId: that.spotId,
-            comment: that.textarea,
-          })
-          .then(() => {
-            that.textarea = "";
-            that.getCom();
-            this.$message({
-              type: "success",
-              message: "评价成功!",
-            });
-          });
       } else {
-        this.$message({
-          type: "error",
-          message: "输入不能为空!",
-        });
-      }
+        let that = this;
+        this.getData();
+        if (that.textarea != "") {
+          this.$axios
+            .post("/api/comment", {
+              userId: that.userId,
+              spotId: that.spotId,
+              comment: that.textarea,
+              commentTime: that.getTime(), //调用自定义获取时间函数
+            })
+            .then(() => {
+              that.textarea = "";
+              that.getCom();
+              this.$message({
+                type: "success",
+                message: "评价成功!",
+              });
+            });
+        } else {
+          this.$message({
+            type: "error",
+            message: "输入不能为空!",
+          });
+        }
       }
     },
   },
@@ -257,24 +289,25 @@ export default {
 
 <style scoped>
 .el-header {
-  background-color: #b3c0d1;
+  background-color: #ffe2e2;
   color: #333;
   text-align: center;
   /* line-height: 200px; */
-  margin-right: 200px;
+
+  margin-right: 150px;
 }
 
 .el-footer {
-  background-color: #b3c0d1;
+  background-color: #fff9e3;
   color: #333;
   text-align: right;
   /* line-height: 200px; */
-  margin-right: 200px;
+  margin-right: 150px;
   padding-top: 10px;
 }
 
 .el-aside {
-  background-color: #d3dce6;
+  background-color: #d2fffb;
   color: #333;
   text-align: center;
   /* line-height: 1000px; */
@@ -282,11 +315,11 @@ export default {
 }
 
 .el-main {
-  background-color: #e9eef3;
+  background-color: #fff9e3;
   color: #333;
   text-align: center;
   /* line-height: 600px; */
-  margin-right: 200px;
+  margin-right: 150px;
 }
 .image {
   width: 100%;
